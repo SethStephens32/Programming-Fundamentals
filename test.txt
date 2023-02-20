@@ -1,0 +1,90 @@
+
+	import sys
+# scanner
+def validate_lexemes():
+    global sentence
+    for lexeme in sentence:
+        if (not valid_lexeme(lexeme)):
+            return False
+    return True
+def valid_lexeme(lexeme):
+    return lexeme in ['0','1','2','3','4','5','6','7','8','9']
+def getNextLexeme():
+    global lexeme
+    global lexeme_index
+    global sentence
+    global num_lexemes
+    global error
+    lexeme_index = lexeme_index + 1
+    if (lexeme_index < num_lexemes):
+        lexeme = sentence[lexeme_index]
+    else:
+        lexeme = " "
+# parser
+# 
+#
+'''
+(r1) <expr> ::= <start>[<term>]
+(r2) <term> ::=<digit>[<term>]
+(r3) <start> ::= 1|2|3|4|5|6|7|8|9
+(r4) <digit> ::= 0|1|2|3|4|5|6|7|8|9
+'''
+def symbol_expr():
+    global lexeme
+    global lexeme_index
+    global num_lexemes
+    global error
+    start = ['1','2','3','4','5','6','7','8','9']
+    digit = ['0','1','2','3','4','5','6','7','8','9']
+    #if lexeme_index == 0:
+    print(f'start Enter {lexeme_index}')     
+    if lexeme == 0 and lexeme_index == 0:
+        print(f'start 1 {lexeme_index}')
+        error = True
+        return
+    getNextLexeme()
+    if lexeme != 0 and lexeme_index ==0:
+        print(f'start 2 {lexeme_index}')
+        symbol_expr()
+
+    if lexeme_index >0:  
+        getNextLexeme()
+        if lexeme in digit:
+            print(f'digit 2 {lexeme_index}')
+            symbol_expr()
+            
+
+        
+# main program
+# read in the input sentences
+#for line in sys.stdin:
+while 1:
+    line = input('Enter expression: ')
+#  line = line[:-1]   # remove trailing newline
+    sentence = line.split()
+    print(sentence)
+    num_lexemes = len(sentence)
+    
+    lexeme_index = -1
+    error = False
+    
+    if line == 'stop':
+        break
+    
+    if (validate_lexemes()):
+        getNextLexeme()
+        symbol_expr()
+      # Either an error occurred or
+      # the input sentence is not entirely parsed.
+        if (error or lexeme_index < num_lexemes):
+            print('"{}" is not a sentence.'.format(line))
+        else:
+            print('"{}" is a sentence.'.format(line))
+    else:
+        print('"{}" contains invalid lexemes and, thus, '
+            'is not a sentence.'.format(line))
+
+# 1 2 3 4
+#'1', '2', '3', '4'
+        
+# shift and reduce bottom up 

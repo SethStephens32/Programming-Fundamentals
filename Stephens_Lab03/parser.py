@@ -1,16 +1,37 @@
 import sys
-import re
 
 # scanner
 def validate_lexemes():
     global sentence
     for lexeme in sentence:
-        if (not valid_lexeme(lexeme)):
+        if not valid_lexeme(lexeme):
             return False
     return True
 
 def valid_lexeme(lexeme):
-    return re.match(r'^[1-9]\d*(\.\d+)?$', lexeme)
+    return is_digitL(lexeme) or is_digit(lexeme)
+
+def is_digitL(lexeme):
+    if not lexeme:
+        return False
+    if lexeme[0] == "0" and len(lexeme) > 1:
+        return False
+    for c in lexeme:
+        if c < "0" or c > "9":
+            return False
+    return True
+
+def is_digit(lexeme):
+    if not lexeme or "." not in lexeme:
+        return False
+    if lexeme[0] == "0" and lexeme[1] != ".":
+        return False
+    digitL_part, decimal_part = lexeme.split(".")
+    if not digitL_part and not decimal_part:
+        return False
+    if not is_digitL(digitL_part) or not is_digitL(decimal_part):
+        return False
+    return True
 
 def getNextLexeme():
     global lexeme
@@ -19,23 +40,23 @@ def getNextLexeme():
     global num_lexemes
     global error
     lexeme_index = lexeme_index + 1
-    if (lexeme_index < num_lexemes):
+    if lexeme_index < num_lexemes:
         lexeme = sentence[lexeme_index]
     else:
         lexeme = " "
 
 # parser
-# <number_expr> ::= <integer> | <float>
-# <integer> ::= [1-9] [0-9]*
-# <float> ::= [1-9] [0-9]* . [0-9]+
+# <number_expr> ::= <digitL> | <digit>
+# <digitL> ::= [0-9]*
+# <digit> ::= [1-9] 
 
 def number_expr():
     global lexeme
     global lexeme_index
     global num_lexemes
     global error
-    if not re.match(r'^[1-9]\d*$', lexeme):
-        if not re.match(r'^[1-9]\d*\.\d+$', lexeme):
+    if not is_digitL(lexeme):
+        if not is_digit(lexeme):
             error = True
         else:
             getNextLexeme()
