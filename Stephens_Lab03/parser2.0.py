@@ -10,7 +10,7 @@ def validate_lexemes():
 
 # Function to check if a lexeme (digit) is valid
 def valid_lexeme(lexeme):
-    return lexeme in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+    return lexeme in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 # Function to get the next lexeme (digit)
 def getNextLexeme():
@@ -31,6 +31,7 @@ def getNextLexeme():
         lexeme = " "
 
 # Function to parse a number expression
+# Recursive descent parser
 def number_expr():
     global lexeme
     global lexeme_index
@@ -69,16 +70,18 @@ while True:
 
     # Set up global variables
     lexeme = sentence[0]
-    lexeme_index = 0
+    lexeme_index = -1
     num_lexemes = len(sentence)
     error = False
 
     # Check if the lexemes are valid and parse the number expression
     if validate_lexemes():
+        getNextLexeme()
         number_expr()
-
-    # Print the result
-    if error:
-        print("Invalid Sentence")
+        if (error or lexeme_index < num_lexemes):
+            print(f'{sentence} is not a sentence.')
+        else:
+            print(f'{sentence} is a sentence.')
     else:
-        print("Valid Sentence")
+        print(f'{sentence} contains invalid lexemes and, thus, '
+            'is not a sentence.')
